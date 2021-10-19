@@ -29,7 +29,7 @@ namespace RimWorld.CactusPie.Macros
         {
             string macroName = _copiedMacro.Name;
 
-            if (!_macroCollection.PawnMacroExists(pawnId, macroName))
+            if (!_macroCollection.PawnMacroExists(pawnId, macroName) && !_macroCollection.SharedMacroExists(macroName))
             {
                 Macro macro = _copiedMacro.Clone(Guid.NewGuid().ToString());
                 _macroCollection.AddMacroForPawn(pawnId, macro);
@@ -40,7 +40,7 @@ namespace RimWorld.CactusPie.Macros
             while (true)
             {
                 macroName = $"{_copiedMacro.Name} ({index})";
-                if (!_macroCollection.PawnMacroExists(pawnId, macroName))
+                if (!_macroCollection.PawnMacroExists(pawnId, macroName) && !_macroCollection.SharedMacroExists(macroName))
                 {
                     Macro macro = _copiedMacro.Clone(Guid.NewGuid().ToString());
                     macro.Name = macroName;
@@ -55,8 +55,8 @@ namespace RimWorld.CactusPie.Macros
         public void PasteSharedMacro()
         {
             string macroName = _copiedMacro.Name;
-
-            if (!_macroCollection.SharedMacroExists(macroName))
+            
+            if (!_macroCollection.SharedMacroExists(macroName) && !_macroCollection.GetPawnIdsHavingMacroWithName(macroName).Any())
             {
                 Macro macro = _copiedMacro.Clone(Guid.NewGuid().ToString());
                 _macroCollection.AddSharedMacro(macro);
@@ -67,7 +67,7 @@ namespace RimWorld.CactusPie.Macros
             while (true)
             {
                 macroName = $"{_copiedMacro.Name} ({index})";
-                if (!_macroCollection.SharedMacroExists(macroName))
+                if (!_macroCollection.SharedMacroExists(macroName) && !_macroCollection.GetPawnIdsHavingMacroWithName(macroName).Any())
                 {
                     Macro macro = _copiedMacro.Clone(Guid.NewGuid().ToString());
                     macro.Name = macroName;
