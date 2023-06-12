@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33723.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RimWorld.CactusPie.Macros", "RimWorld.CactusPie.Macros\RimWorld.CactusPie.Macros.csproj", "{68E1ACC4-ABA3-469B-8C8F-E1763D9F5006}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{68E1ACC4-ABA3-469B-8C8F-E1763D9F5006}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68E1ACC4-ABA3-469B-8C8F-E1763D9F5006}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68E1ACC4-ABA3-469B-8C8F-E1763D9F5006}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68E1ACC4-ABA3-469B-8C8F-E1763D9F5006}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {b48d9fde-cdb4-4b77-b3b6-b4de1e9a5d0d}
+	EndGlobalSection
+EndGlobal
