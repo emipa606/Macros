@@ -11,7 +11,7 @@ public class ExposableList<TExposable> : IExposable, IList<TExposable>, IReadOnl
 
     public ExposableList()
     {
-        _list = new List<TExposable>();
+        _list = [];
     }
 
     public void ExposeData()

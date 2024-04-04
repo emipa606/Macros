@@ -8,31 +8,21 @@ using Verse.AI;
 
 namespace RimWorld.CactusPie.Macros;
 
-public class MacroManager : IMacroManager
+public class MacroManager(IMacroCollection macroCollection, Pawn pawn) : IMacroManager
 {
-    private readonly IMacroCollection _macroCollection;
-
-    private readonly Pawn _pawn;
-
-    public MacroManager(IMacroCollection macroCollection, Pawn pawn)
-    {
-        _macroCollection = macroCollection;
-        _pawn = pawn;
-    }
-
     public IList<Macro> GetPawnMacros()
     {
-        return _macroCollection.GetPawnMacros(_pawn.ThingID);
+        return macroCollection.GetPawnMacros(pawn.ThingID);
     }
 
     public IList<Macro> GetSharedMacros()
     {
-        return _macroCollection.GetSharedMacros();
+        return macroCollection.GetSharedMacros();
     }
 
     public CanCreateMacroState CanCreateMacro()
     {
-        if (!_pawn.jobs.AllJobs().Any())
+        if (!pawn.jobs.AllJobs().Any())
         {
             return new CanCreateMacroState
             {
@@ -58,7 +48,7 @@ public class MacroManager : IMacroManager
 
     public void ExecuteMacro(Macro macro, bool clearCurrentJobs)
     {
-        ExecuteMacroForPawn(macro, _pawn, clearCurrentJobs);
+        ExecuteMacroForPawn(macro, pawn, clearCurrentJobs);
     }
 
     public void ExecuteMacroForAllPawns(Macro macro, bool clearCurrentJobs)
@@ -94,7 +84,7 @@ public class MacroManager : IMacroManager
             return;
         }
 
-        var jobs = (from job in _pawn.jobs.AllJobs()
+        var jobs = (from job in pawn.jobs.AllJobs()
             select new JobData
             {
                 Def = job.def,
@@ -117,22 +107,22 @@ public class MacroManager : IMacroManager
         };
         if (isShared)
         {
-            _macroCollection.AddSharedMacro(macro);
+            macroCollection.AddSharedMacro(macro);
         }
         else
         {
-            _macroCollection.AddMacroForPawn(_pawn.ThingID, macro);
+            macroCollection.AddMacroForPawn(pawn.ThingID, macro);
         }
     }
 
     public void EditMacro(string macroId, string newName, bool newIsShared)
     {
         var sharedMacroUsed = false;
-        var macro = _macroCollection.GetPawnMacros(_pawn.ThingID).FirstOrDefault(x => x.Id == macroId);
+        var macro = macroCollection.GetPawnMacros(pawn.ThingID).FirstOrDefault(x => x.Id == macroId);
         if (macro == null)
         {
             sharedMacroUsed = true;
-            macro = _macroCollection.GetSharedMacros().FirstOrDefault(x => x.Id == macroId);
+            macro = macroCollection.GetSharedMacros().FirstOrDefault(x => x.Id == macroId);
         }
 
         if (macro == null)
@@ -148,20 +138,20 @@ public class MacroManager : IMacroManager
 
         if (newIsShared)
         {
-            _macroCollection.DeletePawnMacroById(macroId, _pawn.ThingID);
-            _macroCollection.AddSharedMacro(macro);
+            macroCollection.DeletePawnMacroById(macroId, pawn.ThingID);
+            macroCollection.AddSharedMacro(macro);
         }
         else
         {
-            _macroCollection.DeleteSharedMacroById(macroId);
-            _macroCollection.AddMacroForPawn(_pawn.ThingID, macro);
+            macroCollection.DeleteSharedMacroById(macroId);
+            macroCollection.AddMacroForPawn(pawn.ThingID, macro);
         }
     }
 
     public void DeleteMacro(string macroId)
     {
-        _macroCollection.DeletePawnMacroById(macroId, _pawn.ThingID);
-        _macroCollection.DeleteSharedMacroById(macroId);
+        macroCollection.DeletePawnMacroById(macroId, pawn.ThingID);
+        macroCollection.DeleteSharedMacroById(macroId);
     }
 
     public bool CanExecuteMacrosForPawn(Pawn pawn)
@@ -177,46 +167,46 @@ public class MacroManager : IMacroManager
 
     public bool PawnMacroExistsForCurrentPawn(string macroName)
     {
-        return _macroCollection.GetPawnMacros(_pawn.ThingID).Any(macro => macro.Name == macroName);
+        return macroCollection.GetPawnMacros(pawn.ThingID).Any(macro => macro.Name == macroName);
     }
 
     public bool SharedMacroExists(string macroName)
     {
-        return _macroCollection.SharedMacroExists(macroName);
+        return macroCollection.SharedMacroExists(macroName);
     }
 
     public Pawn FindPlayerPawnHavingMacroName(string macroName)
     {
-        var pawnId = _macroCollection.GetPawnIdsHavingMacroWithName(macroName).FirstOrDefault();
+        var pawnId = macroCollection.GetPawnIdsHavingMacroWithName(macroName).FirstOrDefault();
         return Enumerable.FirstOrDefault(PawnsFinder.AllMapsCaravansAndTravelingTransportPods_Alive_OfPlayerFaction,
             x => x.ThingID == pawnId);
     }
 
     private void ExecuteMacroForPawns(Macro macro, bool clearCurrentJobs, IEnumerable<Pawn> pawns)
     {
-        foreach (var pawn in pawns)
+        foreach (var macroPawn in pawns)
         {
-            if (CanExecuteMacrosForPawn(pawn))
+            if (CanExecuteMacrosForPawn(macroPawn))
             {
-                ExecuteMacroForPawn(macro, pawn, clearCurrentJobs);
+                ExecuteMacroForPawn(macro, macroPawn, clearCurrentJobs);
             }
         }
     }
 
     private void ExecuteMatchingMacrosForPawns(string macroName, bool clearCurrentJobs, IEnumerable<Pawn> pawns)
     {
-        foreach (var pawn in pawns)
+        foreach (var macroPawn in pawns)
         {
-            if (!CanExecuteMacrosForPawn(pawn))
+            if (!CanExecuteMacrosForPawn(macroPawn))
             {
                 continue;
             }
 
-            var macro = _macroCollection.GetPawnAndSharedMacros(pawn.ThingID)
+            var macro = macroCollection.GetPawnAndSharedMacros(macroPawn.ThingID)
                 .FirstOrDefault(x => x.Name == macroName);
             if (macro != null)
             {
-                ExecuteMacroForPawn(macro, pawn, clearCurrentJobs);
+                ExecuteMacroForPawn(macro, macroPawn, clearCurrentJobs);
             }
         }
     }

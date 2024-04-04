@@ -7,7 +7,8 @@ using Verse.Sound;
 
 namespace RimWorld.CactusPie.Macros.Dialogs;
 
-public class MacroListDialog : Window
+public class MacroListDialog(IMacroManager macroManager, IMacroClipboard macroClipboard, Pawn pawn)
+    : Window
 {
     private const float WindowLeftAndRightPadding = 8f;
 
@@ -43,26 +44,14 @@ public class MacroListDialog : Window
 
     private const float ReorderButtonHeight = 18f;
 
-    private readonly IMacroClipboard _macroClipboard;
-    private readonly IMacroManager _macroManager;
-
-    private readonly Pawn _pawn;
-
     private Vector2 _scrollPosition = Vector2.zero;
-
-    public MacroListDialog(IMacroManager macroManager, IMacroClipboard macroClipboard, Pawn pawn)
-    {
-        _macroManager = macroManager;
-        _macroClipboard = macroClipboard;
-        _pawn = pawn;
-    }
 
     public override Vector2 InitialSize => new Vector2(650f, 650f);
 
     public override void DoWindowContents(Rect inRect)
     {
         RenderMacroListScrollView(inRect);
-        if (_macroClipboard.HasCopiedMacro())
+        if (macroClipboard.HasCopiedMacro())
         {
             var pastePawnMacroRect = RenderPastePawnMacroButton(inRect);
             RenderPasteSharedMacroButton(inRect, pastePawnMacroRect);
@@ -74,14 +63,14 @@ public class MacroListDialog : Window
     private void RenderMacroListScrollView(Rect inRect)
     {
         Text.Font = GameFont.Small;
-        var pawnMacros = _macroManager.GetPawnMacros();
-        var sharedMacros = _macroManager.GetSharedMacros();
+        var pawnMacros = macroManager.GetPawnMacros();
+        var sharedMacros = macroManager.GetSharedMacros();
         var scrollViewRowSize = new RowSize(inRect.width - 16f, 40f);
         var height = (pawnMacros.Count + sharedMacros.Count) * scrollViewRowSize.Height;
         var viewRect = new Rect(0f, 0f, inRect.width - 16f, height);
         var outRect =
             GenUI.TopPartPixels(
-                height: !_macroClipboard.HasCopiedMacro()
+                height: !macroClipboard.HasCopiedMacro()
                     ? inRect.height - ButtonHeight - ButtonBottomMargin - ScrollViewBottomMargin
                     : inRect.height - 100f - ScrollViewBottomMargin, rect: inRect);
         var rowYPosition = 0f;
@@ -143,9 +132,9 @@ public class MacroListDialog : Window
         var y = inRect.height - 70f - 30f;
         var rect = new Rect(WindowLeftAndRightPadding, y, width, ButtonHeight);
         if (Widgets.ButtonText(rect, "Macros_List_Dialog_Paste_Pawn_Macro".Translate(), true, true,
-                _macroClipboard.HasCopiedMacro()))
+                macroClipboard.HasCopiedMacro()))
         {
-            _macroClipboard.PasteMacroForPawn(_pawn.ThingID);
+            macroClipboard.PasteMacroForPawn(pawn.ThingID);
         }
 
         return rect;
@@ -159,9 +148,9 @@ public class MacroListDialog : Window
         var x = WindowLeftAndRightPadding + pastePawnMacroRect.width + PasteMacroButtonMargin;
         if (Widgets.ButtonText(new Rect(x, y, width, ButtonHeight), "Macros_List_Dialog_Paste_Shared_Macro".Translate(),
                 true,
-                true, _macroClipboard.HasCopiedMacro()))
+                true, macroClipboard.HasCopiedMacro()))
         {
-            _macroClipboard.PasteSharedMacro();
+            macroClipboard.PasteSharedMacro();
         }
     }
 
@@ -217,10 +206,10 @@ public class MacroListDialog : Window
             return rect;
         }
 
-        var editMacroDialog = new EditMacroDialog(_macroManager, isShared, macro.Name);
+        var editMacroDialog = new EditMacroDialog(macroManager, isShared, macro.Name);
         editMacroDialog.MacroDetailsChanged += delegate(string newName, bool newIsShared)
         {
-            _macroManager.EditMacro(macro.Id, newName, newIsShared);
+            macroManager.EditMacro(macro.Id, newName, newIsShared);
         };
         Find.WindowStack.Add(editMacroDialog);
 
@@ -233,7 +222,7 @@ public class MacroListDialog : Window
         var x = editButtonRect.x - 70f;
         if (Widgets.ButtonText(new Rect(x, rowBaselineYPosition, 70f, 36f), "Macros_List_Dialog_Copy".Translate()))
         {
-            _macroClipboard.CopyMacro(macro);
+            macroClipboard.CopyMacro(macro);
         }
     }
 
@@ -241,7 +230,7 @@ public class MacroListDialog : Window
     {
         var x = rowRect.width - 16f - 20f;
         var rect = new Rect(x, rowBaselineYPosition, 36f, 36f);
-        if (!Widgets.ButtonImage(rect, TexButton.DeleteX, Color.white, GenUI.SubtleMouseoverColor))
+        if (!Widgets.ButtonImage(rect, TexButton.Delete, Color.white, GenUI.SubtleMouseoverColor))
         {
             return rect;
         }
@@ -254,7 +243,7 @@ public class MacroListDialog : Window
 
         void OnClick()
         {
-            _macroManager.DeleteMacro(macro.Id);
+            macroManager.DeleteMacro(macro.Id);
         }
     }
 

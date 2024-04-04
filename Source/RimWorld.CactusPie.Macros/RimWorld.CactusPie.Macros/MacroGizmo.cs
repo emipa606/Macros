@@ -107,6 +107,8 @@ public class MacroGizmo : Command_Action
                 ShouldClearCurrentJobs);
         }
 
+        return;
+
         static bool ShouldClearCurrentJobs()
         {
             if (!Input.GetKey(KeyCode.LeftShift))

@@ -5,16 +5,9 @@ using RimWorld.CactusPie.Macros.Interfaces;
 
 namespace RimWorld.CactusPie.Macros;
 
-public class MacroClipboard : IMacroClipboard
+public class MacroClipboard(IMacroCollection macroCollection) : IMacroClipboard
 {
-    private readonly IMacroCollection _macroCollection;
-
     private Macro _copiedMacro;
-
-    public MacroClipboard(IMacroCollection macroCollection)
-    {
-        _macroCollection = macroCollection;
-    }
 
     public void CopyMacro(Macro macro)
     {
@@ -29,10 +22,10 @@ public class MacroClipboard : IMacroClipboard
     public void PasteMacroForPawn(string pawnId)
     {
         var name = _copiedMacro.Name;
-        if (!_macroCollection.PawnMacroExists(pawnId, name) && !_macroCollection.SharedMacroExists(name))
+        if (!macroCollection.PawnMacroExists(pawnId, name) && !macroCollection.SharedMacroExists(name))
         {
             var macro = _copiedMacro.Clone(Guid.NewGuid().ToString());
-            _macroCollection.AddMacroForPawn(pawnId, macro);
+            macroCollection.AddMacroForPawn(pawnId, macro);
             return;
         }
 
@@ -40,7 +33,7 @@ public class MacroClipboard : IMacroClipboard
         while (true)
         {
             name = $"{_copiedMacro.Name} ({num})";
-            if (!_macroCollection.PawnMacroExists(pawnId, name) && !_macroCollection.SharedMacroExists(name))
+            if (!macroCollection.PawnMacroExists(pawnId, name) && !macroCollection.SharedMacroExists(name))
             {
                 break;
             }
@@ -50,16 +43,16 @@ public class MacroClipboard : IMacroClipboard
 
         var macro2 = _copiedMacro.Clone(Guid.NewGuid().ToString());
         macro2.Name = name;
-        _macroCollection.AddMacroForPawn(pawnId, macro2);
+        macroCollection.AddMacroForPawn(pawnId, macro2);
     }
 
     public void PasteSharedMacro()
     {
         var name = _copiedMacro.Name;
-        if (!_macroCollection.SharedMacroExists(name) && !_macroCollection.GetPawnIdsHavingMacroWithName(name).Any())
+        if (!macroCollection.SharedMacroExists(name) && !macroCollection.GetPawnIdsHavingMacroWithName(name).Any())
         {
             var macro = _copiedMacro.Clone(Guid.NewGuid().ToString());
-            _macroCollection.AddSharedMacro(macro);
+            macroCollection.AddSharedMacro(macro);
             return;
         }
 
@@ -67,8 +60,8 @@ public class MacroClipboard : IMacroClipboard
         while (true)
         {
             name = $"{_copiedMacro.Name} ({num})";
-            if (!_macroCollection.SharedMacroExists(name) &&
-                !_macroCollection.GetPawnIdsHavingMacroWithName(name).Any())
+            if (!macroCollection.SharedMacroExists(name) &&
+                !macroCollection.GetPawnIdsHavingMacroWithName(name).Any())
             {
                 break;
             }
@@ -78,6 +71,6 @@ public class MacroClipboard : IMacroClipboard
 
         var macro2 = _copiedMacro.Clone(Guid.NewGuid().ToString());
         macro2.Name = name;
-        _macroCollection.AddSharedMacro(macro2);
+        macroCollection.AddSharedMacro(macro2);
     }
 }

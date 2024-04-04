@@ -72,19 +72,19 @@ While technically you can create a macro to move your pawns into a defensive pos
 The icon used for the logo and the in-game icon was downloaded from:
 https://www.flaticon.com/free-icon/way_1179054
   
-## GitHub
-
-https://github.com/CactusPie/RimWorld-Macros
-
 ![Image](https://i.imgur.com/PwoNOj4.png)
 
 
 
 -  See if the the error persists if you just have this mod and its requirements active.
 -  If not, try adding your other mods until it happens again.
--  Post your error-log using https://steamcommunity.com/workshop/filedetails/?id=818773962]HugsLib and command Ctrl+F12
+-  Post your error-log using https://steamcommunity.com/workshop/filedetails/?id=818773962]HugsLib or the standalone https://steamcommunity.com/sharedfiles/filedetails/?id=2873415404]Uploader and command Ctrl+F12
 -  For best support, please use the Discord-channel for error-reporting.
 -  Do not report errors by making a discussion-thread, I get no notification of that.
 -  If you have the solution for a problem, please post it to the GitHub repository.
+-  Use https://github.com/RimSort/RimSort/releases/latest]RimSort to sort your mods
 
+
+
+https://steamcommunity.com/sharedfiles/filedetails/changelog/2988445397]![Image](https://img.shields.io/github/v/release/emipa606/Macros?label=latest%20version&style=plastic&color=9f1111&labelColor=black)
 

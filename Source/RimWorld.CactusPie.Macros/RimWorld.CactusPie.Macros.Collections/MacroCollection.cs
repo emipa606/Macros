@@ -15,7 +15,7 @@ public class MacroCollection : IMacroCollection, IExposable
     public MacroCollection()
     {
         _pawnMacros = new Dictionary<string, ExposableList<Macro>>();
-        _sharedMacros = new List<Macro>();
+        _sharedMacros = [];
     }
 
     public void ExposeData()
@@ -28,7 +28,7 @@ public class MacroCollection : IMacroCollection, IExposable
     {
         if (!_pawnMacros.TryGetValue(pawnId, out var value))
         {
-            value = new ExposableList<Macro>();
+            value = [];
             _pawnMacros.Add(pawnId, value);
         }
 
@@ -52,7 +52,7 @@ public class MacroCollection : IMacroCollection, IExposable
             return value;
         }
 
-        value = new ExposableList<Macro>();
+        value = [];
         _pawnMacros.Add(pawnId, value);
 
         return value;

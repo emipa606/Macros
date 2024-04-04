@@ -1,14 +1,8 @@
 namespace RimWorld.CactusPie.Macros.Data;
 
-public readonly struct RowSize
+public readonly struct RowSize(float width, float height)
 {
-    public float Width { get; }
+    public float Width { get; } = width;
 
-    public float Height { get; }
-
-    public RowSize(float width, float height)
-    {
-        Width = width;
-        Height = height;
-    }
+    public float Height { get; } = height;
 }

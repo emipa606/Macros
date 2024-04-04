@@ -5,15 +5,9 @@ using Verse;
 
 namespace RimWorld.CactusPie.Macros.Data;
 
-public class SaveData : WorldComponent
+public class SaveData(World world) : WorldComponent(world)
 {
-    private IMacroCollection _macroCollection;
-
-    public SaveData(World world)
-        : base(world)
-    {
-        _macroCollection = new MacroCollection();
-    }
+    private IMacroCollection _macroCollection = new MacroCollection();
 
     public IMacroCollection MacroCollection
     {

@@ -6,7 +6,8 @@ using Verse;
 
 namespace RimWorld.CactusPie.Macros.Dialogs;
 
-public class EditMacroDialog : Window
+public class EditMacroDialog(IMacroManager macroManager, bool isShared = false, string macroName = null)
+    : Window
 {
     public delegate void MacroDetailsChangedEventHandler(string newName, bool isShared);
 
@@ -16,20 +17,9 @@ public class EditMacroDialog : Window
 
     private const int MaximumNameLength = 30;
 
-    private readonly IMacroManager _macroManager;
-
-    private string _currentName;
-
-    private bool _isShared;
+    private string _currentName = macroName ?? "Macros_Add_Dialog_Default_Name".Translate();
 
     private bool _isTextFieldFocused;
-
-    public EditMacroDialog(IMacroManager macroManager, bool isShared = false, string macroName = null)
-    {
-        _macroManager = macroManager;
-        _isShared = isShared;
-        _currentName = macroName ?? "Macros_Add_Dialog_Default_Name".Translate();
-    }
 
     public override Vector2 InitialSize => new Vector2(500f, 200f);
 
@@ -69,7 +59,7 @@ public class EditMacroDialog : Window
     private void RenderIsSharedCheckbox(ref float yPositionOffset)
     {
         var rect = new Rect(0f, yPositionOffset, 230f, 35f);
-        CustomWidgets.CheckboxLabeled(rect, "Macros_Edit_Dialog_Is_Shared".Translate(), ref _isShared);
+        CustomWidgets.CheckboxLabeled(rect, "Macros_Edit_Dialog_Is_Shared".Translate(), ref isShared);
         Text.Anchor = TextAnchor.UpperLeft;
         yPositionOffset += rect.height;
     }
@@ -116,7 +106,7 @@ public class EditMacroDialog : Window
             return;
         }
 
-        OnMacroNameChanged(_currentName, _isShared);
+        OnMacroNameChanged(_currentName, isShared);
         Find.WindowStack.TryRemove(this);
     }
 
@@ -145,7 +135,7 @@ public class EditMacroDialog : Window
             };
         }
 
-        if (_macroManager.SharedMacroExists(_currentName))
+        if (macroManager.SharedMacroExists(_currentName))
         {
             return new MacroValidationData
             {
@@ -154,9 +144,9 @@ public class EditMacroDialog : Window
             };
         }
 
-        if (_isShared)
+        if (isShared)
         {
-            var pawn = _macroManager.FindPlayerPawnHavingMacroName(_currentName);
+            var pawn = macroManager.FindPlayerPawnHavingMacroName(_currentName);
             if (pawn != null)
             {
                 return new MacroValidationData
@@ -166,7 +156,7 @@ public class EditMacroDialog : Window
                 };
             }
         }
-        else if (_macroManager.PawnMacroExistsForCurrentPawn(_currentName))
+        else if (macroManager.PawnMacroExistsForCurrentPawn(_currentName))
         {
             return new MacroValidationData
             {
